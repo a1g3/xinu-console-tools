@@ -1,0 +1,6 @@
+%LOGFILE% {
+    missingok
+    monthly
+    create 0664 xinu xinu
+    rotate 1
+}

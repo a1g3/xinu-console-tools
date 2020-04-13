@@ -1,0 +1,1 @@
+setenv XINU_SERVERS %SERVERNAME%

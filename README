@@ -1,0 +1,23 @@
+							2006 Oct 23
+
+   This directory contains the source for the complete set of XINU Lab
+console tools.  This includes the client-side programs xinu-console and
+xinu-status, as well as the xinu-consoled daemon and all of its support
+utilities.
+
+   Contents:
+	src/		Source for xinu-consoled daemon and console tools.
+	include/	Headers shared between all the utilities.
+	lib/		Libraries (mostly networking calls) shared by all
+			the utilities.
+	man/		Man pages for xinu-*.
+	scripts/	Supporting scripts and wrappers.
+
+
+   These tools have recently been "autotoolized", as a first pass at
+making them more portable.  However, very little effort has been put
+into reacting properly should any of the autoconf tests fail, so this
+is really only known to work well in Fedora Core Linux at present.
+   Previous incarnations have run reliably on Solaris, BSD, and other
+flavors of UNIX, so the code should be fairly portable.
+   See INSTALL for more info on actual deployment of this system.

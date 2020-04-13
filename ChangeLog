@@ -1,0 +1,46 @@
+2006/10/23 brylow
+	- Completed "autotoolization" of xinu-console source
+	for both daemon and console tools.
+	- Multitude of documentation fixes
+	- Ready for (v2.0) release.
+	
+2002/01/16 brylow
+	- Note difference in control characters for breaking terminal.
+	
+2002/01/15 brylow
+	- Notes	on the strange story of TCP Wrappers in this department.
+	- Added note about TCP Wrappers.
+	- Modern manpage for the console server.
+	- Updated to console server to this decade.
+
+2002/01/11 brylow
+	- Makefile options for TCP wrappers.
+	- Added TCP wrappers to cserver.  Now, we can prevent miscreants from
+	uploading anything they like from anywhere on the Internet.
+	- New MAXCONNECTIONS.  New paths.
+
+2002/01/11 telfer
+	 - Removed sgtty.h from include list.  Superfluous, useless, and
+	 causing warning when compiling under Solaris.
+	 - Eliminated warning in ttymode.c
+	 - Updated ttyutils to Posix standard tty handling.
+
+2002/01/10 brylow
+	- Handling of CS_CLASS and CS_SERVERS params and environment
+	variables improved.
+	- Updated the man pages to reflect changes
+	made throughout the 80's and 90's.
+	- Console daemon now builds and links under Linux.
+	- Path corrections.  Will make trouble later.
+	- Make getdfltClass function no longer static.
+
+2002/01/08 brylow
+	- Corrections for savetty.
+	- Chris Telfer found some nice POSIX-compliant ttyio stuff that
+	works much better under Linux, and just as well under Solaris.
+	Issues still exist, however.
+	- Cosmetic fiddling with version strings.
+	- TTY I/O fixed under Linux.
+	- "Millenium Edition" version strings added.
+	- Put in default CLASS and SERVER.
+

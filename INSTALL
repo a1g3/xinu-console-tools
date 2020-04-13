@@ -1,0 +1,93 @@
+							2006 Oct 23
+
+OVERVIEW
+========
+   The XINU console daemon system consists of two parts: a daemon that runs
+on a host with hardware access to the consoles of a set of backend machines;
+and client programs that allow remote hosts to connect to and control these
+backends over the network.
+
+   The Console Host can use various types of hardware to communicate
+with the backend machines, ranging from a single backend machine
+connected by lone serial port, up to dozens of backends connected
+using a serial port annex or terminal aggregator.  At Purdue, we use a
+serial annex that allows dozens of additional serial lines to be made
+available via SCSI bus.  At Marquette, we use an ethernet device that
+makes dozens of serial consoles to appear as local devices on a Linux
+host, when in fact the EtherLite is tunneling over the local area
+network.
+   The xinu-consoled only needs to run on the Console Host machine; it is
+possible to have multiple Console Hosts, each offering up their respective
+backends to the system.
+
+   Front End Hosts are for actually developing the operating system
+kernel, and typically include a compiler for the backend's native
+architecture.  Front End Hosts use the xinu-console tool to provide
+the local user with a text-based console interface to the remote
+backend, via the Console Host that is running the daemon.
+
+SECURITY
+========
+   The current incarnation of the console daemon uses TCP Wrappers to
+regulate access to the backend consoles.
+   Typical settings for Purdue would be:
+
+hosts.allow:
+
+	xinu-consoled : 128.10. 128.211.0.0/255.255.240.0
+
+hosts.deny:
+
+	xinu-consoled : ALL
+
+   See the man page for hosts_access for more details.
+   In general, it is not wise to leave an unsecured console daemon running
+with available backends.  Since one of the basic purposes of the system is
+to allow remote clients to upload their own operating system kernel and
+run it on the backend hardware, the xinu-consoled is essentially an
+unregulated door for remote users to have free reign over whatever
+subnets your backends reside on.
+
+   Responsible administrators will both take steps to lock down the
+open xinu-consoled ports on the Console Host, and should isolate any
+backend machines as much as possible from the production network.  Of
+course, if you are using the system to develop operating system
+networking code that must interact with the real production network,
+this can be tricky.
+
+   The console daemon must run as a user ID with write-access to its
+logfile and TFTP directory for downloads.  By default, this is user
+"xinu" (95) and group "xinu" (95).  Creating and configuring the
+proper TFTP and DHCP daemons for the backends to boot is beyond the
+scope of this document, but need not deviate from typical standards to
+satisfy the console daemon system.
+
+CONFIGURATION
+=============
+   The console daemon takes its backend descriptions from a master
+configuration file, by default /etc/xinu-consoled.conf.  See the
+conf file for a description of the acceptable grammar.  The connections
+described outline not only the available types and instances of backend
+machines, but also the specific commands to run when remote console requests
+are made, (e.g. downloads and reboots.)
+
+   The console daemon logs all connections and transactions in a log file,
+by default /var/log/xinu-consoled.  For a busy laboratory, this log can
+grow quickly.  This installation includes hooks for the Fedora logrotate
+daemon to keep the size of these log files under control.
+
+   The client programs, xinu-console and xinu-status, take both command-line
+parameters or environment parameters to control their behavior.  Both are
+described in the man page, and the clients package includes scripts for
+/etc/profile.d/ to automatically set the default environment variables.
+
+   Many of the defaults for the system are specified in configure.in, and
+can be adjusted as desired.  Of particular interest to a fresh installation:
+- Default port that the daemon listens to is 2025 -- this can be reconfigured in  configure.in or the generated include/config.h file prior to compilation.
+- The name of the console host should be in the /etc/xinu-consoled.conf file.
+  The clients may have this name set as an environment variable, may have
+  it passed in as a command-line parameter, or can search for a daemon on
+  the local subnet automatically using a broadcast request.
+- The paths and parameters for commands/scripts to connect to a console,
+  download a kernel into the TFTP directory, or reboot a backend must be
+  properly specified in /etc/xinu-consoled.conf on the console host.

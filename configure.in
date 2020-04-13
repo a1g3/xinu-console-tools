@@ -1,0 +1,153 @@
+AC_INIT
+AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_HEADER(include/config.h)
+AM_INIT_AUTOMAKE(xinu-console,2.07,brylow@mscs.mu.edu)
+
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_LEX
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([fcntl.h netdb.h netinet/in.h arpa/inet.h stdlib.h string.h strings.h sys/file.h sys/ioctl.h sys/param.h sys/socket.h time.h termios.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_PID_T
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_FUNC_FORK
+AC_FUNC_GETGROUPS
+AC_PROG_GCC_TRADITIONAL
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_FUNC_SELECT_ARGTYPES
+AC_TYPE_SIGNAL
+AC_FUNC_WAIT3
+AC_CHECK_FUNCS([alarm bzero dup2 gethostbyname gethostname inet_ntoa memset select socket strerror strrchr])
+
+AC_SUBST(logdir, /var/log)
+AC_DEFINE_UNQUOTED(CS_LOGGINGDIR, "${logdir}", \
+				  Console daemon log directory)
+
+AC_SUBST(configfile, xinu-consoled.conf)
+dnl AC_DEFINE_UNQUOTED(CS_CONFIGURATIONFILE, "${sysconfdir}/${configfile}", \
+dnl				Console daemon connection configuration)
+dnl ##### Path to xpdfrc.
+dnl This ugly kludge to get the sysconfdir path is needed because
+dnl autoconf doesn't actually set the prefix variable until later.
+if test "$sysconfdir" = '${prefix}/etc'; then
+  if test "x$prefix" = xNONE; then
+    cs_conffile="$ac_default_prefix/etc/${configfile}"
+  else
+    cs_conffile="$prefix/etc/${configfile}"
+  fi
+else
+  cs_conffile="$sysconfdir/${configfile}"
+fi
+AC_DEFINE_UNQUOTED(CS_CONFIGURATIONFILE, "$cs_conffile", \
+	               Console daemon connection configuration)
+
+AC_DEFINE(CS_GROUP, "xinu", Group console daemon should run as)
+
+AC_SUBST(cserver, "xinu-consoled")
+AC_SUBST(pserver, "xinu-powerd")
+AC_DEFINE_UNQUOTED(CS_CSERVER, "${cserver}", Name of console daemon)
+AC_DEFINE_UNQUOTED(CS_PSERVER, "${pserver}", Name of power daemon)
+AC_DEFINE(CS_PORT, 2024, Port console daemon listens on)
+AC_DEFINE(POWERD_PORT, 2023, Port power daemon listens on)
+AC_DEFINE(DOMAINNAME, "mscs.mu.edu", Default domain)
+AC_SUBST(servername, "morbius")
+
+# Check whether user wants TCP wrappers support
+TCPW_MSG="no"
+AC_ARG_WITH(tcp-wrappers,
+        [  --with-tcp-wrappers[[=PATH]] Enable tcpwrappers support (optionally in PATH)],
+        [
+                if test "x$withval" != "xno" ; then
+                        if test -n "${withval}" && \
+                            test "x${withval}" != "xyes"; then
+                                if test -d "${withval}/lib"; then
+                                        if test -n "${need_dash_r}"; then
+                                                LDFLAGS="-L${withval}/lib -R${withval}/lib ${LDFLAGS}"
+                                        else
+                                                LDFLAGS="-L${withval}/lib ${LDFLAGS}"
+                                        fi
+                                else
+                                        if test -n "${need_dash_r}"; then
+                                                LDFLAGS="-L${withval} -R${withval} ${LDFLAGS}"
+                                        else
+                                                LDFLAGS="-L${withval} ${LDFLAGS}"
+                                        fi
+                                fi
+                                if test -d "${withval}/include"; then
+                                        CPPFLAGS="-I${withval}/include ${CPPFLAGS}"
+                                else
+                                        CPPFLAGS="-I${withval} ${CPPFLAGS}"
+                                fi
+                        fi
+                        LIBWRAP="-lwrap"
+                        LIBS="$LIBWRAP $LIBS"
+                        AC_MSG_CHECKING(for libwrap)
+                        AC_TRY_LINK(
+                                [
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <tcpd.h>
+                                        int deny_severity = 0, allow_severity = 0;
+                                ],
+                                [hosts_access(0);],
+                                [
+                                        AC_MSG_RESULT(yes)
+                                        AC_DEFINE(LIBWRAP, 1,
+                                                [Define if you want
+                                                TCP Wrappers support])
+                                        AC_SUBST(LIBWRAP)
+                                        TCPW_MSG="yes"
+                                ],
+                                [
+                                        AC_MSG_ERROR([*** libwrap missing])
+                                ]
+                        )
+                fi
+        ],
+	[
+		LIBWRAP="-lwrap"
+		LIBS="$LIBWRAP $LIBS"
+		AC_MSG_CHECKING(for libwrap)
+		AC_TRY_LINK(
+			[
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <tcpd.h>
+			int deny_severity = 0, allow_severity = 0;
+			],
+			[hosts_access(0);],
+			[
+				AC_MSG_RESULT(yes)
+				AC_DEFINE(LIBWRAP, 1,
+					[Define if you want
+					TCP Wrappers support])
+				AC_SUBST(LIBWRAP)
+				TCPW_MSG="yes"
+			],
+			[
+				AC_MSG_ERROR([*** libwrap missing])
+			]
+		)
+	]
+)
+
+
+AC_CONFIG_FILES([Makefile
+                 lib/Makefile
+                 src/Makefile
+		 scripts/Makefile])
+
+AC_OUTPUT
