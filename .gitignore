@@ -1,0 +1,9 @@
+lib/
+src/.deps/
+*.o
+src/tty-connect
+src/xinu-console
+src/xinu-consoled
+src/xinu-powerd
+src/xinu-power
+src/xinu-status
