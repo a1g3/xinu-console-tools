@@ -212,18 +212,21 @@ static int init_socket(int port)
 
 	// lose the pesky "Address already in use" error message
  	if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1) {
+		close(sockfd);
 		perror("setsockopt");
 		return -1;
 	} 
 
     if( bind(sockfd, (struct sockaddr *)&my_addr, sizeof my_addr) < 0 )
 	{
+		close(sockfd);
 		syslog(LOG_ERR, "bind(): %s", strerror(errno));
 		return -1;
 	}
 
     if( listen(sockfd, BACKLOG) < 0 )
 	{
+		close(sockfd);
 		syslog(LOG_ERR, "listen(): %s", strerror(errno));
 		return -1;
 	}

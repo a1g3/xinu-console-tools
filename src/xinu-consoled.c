@@ -111,7 +111,7 @@ static void printusage(char *sb)
 	exit( 1 );
 }
 
-static setSignals(void)
+static int setSignals(void)
 {
 #ifdef SOLARIS
 	{
@@ -132,6 +132,7 @@ static setSignals(void)
 	signal( SIGQUIT, Quit );
 	signal( SIGHUP, Reboot );
 #endif
+	return 0;
 }
 
 int main(int argc, char **argv)

@@ -14,7 +14,7 @@
 #define KEEPALIVE
 
 static char class[ MAXCLASSNAME ];
-static char host[ MAXHOSTNAME ];
+static char host[ MAXHOSTNAME + 1 ];
 static char connection[ MAXCONNECTIONNAME ];
 static int g_dev = -1;
 

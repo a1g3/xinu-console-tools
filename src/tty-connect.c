@@ -185,7 +185,7 @@ main(int argc, char **argv)
 static int pc_dev = -1;          /* Device to output characters to        */
 static int pc_rv = 0;
 static int pc_len = 0;           /* Current number of chars in the buffer */
-static char pc_buf[ PC_LEN ];    /* Output buffer                         */
+static char pc_buf[ PC_LEN + 1 ];    /* Output buffer                         */
 
 /**
  * Prepares to output characters to a secified device.

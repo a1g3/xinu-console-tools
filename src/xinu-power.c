@@ -126,6 +126,7 @@ static int socket_connect(int port, char *ipaddr)
     if( connect(sockfd, (struct sockaddr *)&dest_addr, sizeof dest_addr)
 			== -1 )
 	{
+		close(sockfd);
 		perror("connect()");
 		return -1;
 	}
