@@ -27,7 +27,7 @@ static int getInputString(char *, int);
 
 static char *prog = 0;
 
-static printusage(char *sb)
+static int printusage(char *sb)
 {
 	fprintf( stderr,
 		 "usage: %s [-t] [-f] [-c class] [-s server] [connection]\n",
@@ -245,7 +245,6 @@ int main(int argc, char **argv)
 static int handlebreak(int devout)
 {
 	char ch;
-	int rv1, rv2;
 
 	printf( "\r\n" );
 	while( 1 ) {
@@ -285,7 +284,7 @@ static int handlebreak(int devout)
 					0 ) == 0 ) 
 			{
 				setTTY();
-				return( 0 );
+				return( 1 );
 			}
 			setTTY();
 			return( 0 );

@@ -266,7 +266,7 @@ int main(int argc, char **argv)
 		
 		/* disassociate the server from the invoker's terminal	*/
 		close( 0 );
-		if( ( fd = open( "/", O_RDONLY ) ) != 0 ) {
+		if( ( fd = open( "/", O_RDONLY ) ) <= 0 ) {
 			dup2( fd, 0 );
 			close( fd );
 		}

@@ -12,7 +12,7 @@
 void printusage(char *sb);
 void printstatus(struct reply *reply, int fflag, int bflag);
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	int sock;
 	int fflag = 0;
@@ -26,7 +26,7 @@ main(int argc, char **argv)
     char * servers[MAXSERVERS];
 
 	host[ 0 ] = '\0';
-	host[ MAXHOSTNAME ] = '\0';
+	host[ MAXHOSTNAME - 1 ] = '\0';
 	connection[ 0 ] = '\0';
 	connection[ MAXCONNECTIONNAME - 1 ] = '\0';
 	class[ 0 ] = '\0';

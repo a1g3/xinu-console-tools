@@ -105,7 +105,7 @@ static int
 ismyname( char *name )
 {
 	static char myrealname[ 256 ];
-	static amnesia = 1;
+	static int amnesia = 1;
 	struct hostent *he;
 	
 	if( amnesia ) {
@@ -114,7 +114,8 @@ ismyname( char *name )
 		
 		gethostname( myname, sizeof( myname ) );
 		he = gethostbyname( myname );
-		strcpy( myrealname, he->h_name );
+		strncpy( myrealname, he->h_name, 255);
+		myrealname[255] = '\0';
 		amnesia = 0;
 	}
 	if( ( he = gethostbyname( name ) ) == (struct hostent *) 0 ) {
@@ -122,8 +123,6 @@ ismyname( char *name )
 	}
 	return( strncmp( myrealname, he->h_name, strlen( he->h_name ) ) == 0 );
 }
-
-static struct condata * basicMakeEntry();
 
 static int
 skipNewlines( void )

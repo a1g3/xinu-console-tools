@@ -4,6 +4,8 @@
 #include <sys/types.h>
 #include <sys/file.h>
 #include <sys/fcntl.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 struct  baudent {
   char		*name;
@@ -80,6 +82,7 @@ int OpenTTYLine(char *dev, char *baudrate)
   }
 
   if ( tcgetattr( devfd, &t ) < 0 ) {
+    close(devfd);
     return( -1 );
   }
 
@@ -106,6 +109,7 @@ int OpenTTYLine(char *dev, char *baudrate)
   t.c_cc[VTIME] = 0;
 
   if ( tcsetattr( devfd, TCSAFLUSH, &t ) < 0 ) {
+    close(devfd);
     return( -1 );
   }
   

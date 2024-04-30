@@ -5,6 +5,7 @@
 #include <strings.h>
 #include <assert.h>
 #include <netdb.h>
+#include <unistd.h>
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -188,6 +189,7 @@ int connectsock(char *host, int service, char *protocol)
 
 	/* Connect the socket */
 	if( connect( s, (struct sockaddr *)&sin, sizeof( sin ) ) < 0 ) {
+		close(s);
 		fprintf( stderr,
 		        "connectsock(%s, %d, %s): can't connect to port: %s\n",
 			 host, service, protocol, strerror(errno) );
@@ -240,12 +242,14 @@ int passivesock(int service, char *protocol, int qlen)
 
 	/* Bind the socket */
 	if( bind( s, (struct sockaddr *)&sin, sizeof( sin ) ) < 0 ) {
+		close(s);
 		fprintf( stderr, 
 			 "passivesock(%d, %s, %d): can't bind to port: %s\n", 
 			 service, protocol, qlen, strerror(errno) );
 		return( -1 );
 	}
 	if( type == SOCK_STREAM && ( listen( s, qlen ) < 0 ) ) {
+		close(s);
 		fprintf( stderr, 
 			 "passivesock(%d, %s, %d): can't listen on port: %s\n",
 			 service, protocol, qlen, strerror(errno) );

@@ -14,6 +14,7 @@
 #include <libgen.h>
 #include <rpc.h>
 #include <xinu-power.h>
+#include <arpa/inet.h>
 
 static void usage(char *name);
 static int socket_connect(int port, char *ipaddr);

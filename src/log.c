@@ -36,13 +36,12 @@ void FLog(FILE *file, char *format, char *a1, char *a2,
 		  char *a3, char *a4, char *a5)
 {
 	int pid;
-	char procid[ 32 ];
 	
 	pid = getpid();
 	
 	fprintf( file, "%s pid=%d:\t", timeToSb( time (0L) ), pid );
-	fprintf( file, format, a1, a2, a3, a4, a5 );
 	if( format != NULL && *format != '\0' ) {
+		fprintf( file, format, a1, a2, a3, a4, a5 );
 		if( format[ strlen( format ) - 1 ] != '\n' ) {
 			fprintf( file, "\n" );
 		}

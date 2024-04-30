@@ -359,7 +359,7 @@ int makeConnection(char *connection, char *class, char *host, int getserial2)
 	else {
 		if( class == NULL ) {
 			strncpy( dclass, getdfltClass( class, connection ),
-				 MAXCLASSNAME );
+				 MAXCLASSNAME - 1 );
 			class = dclass;
 		}
 		else {

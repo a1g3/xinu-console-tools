@@ -11,6 +11,7 @@
 #include <netdb.h>
 #include <sys/file.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "cserver.h"
 #include "connect.h"
@@ -136,6 +137,7 @@ int statusrequest(char *connection, char *class, char *host)
 	sa.sin_addr.s_addr = INADDR_ANY;
 	if( bind( sock, (struct sockaddr *) & sa,
 		  sizeof( struct sockaddr_in ) ) < 0 ) {
+		close(sock);
 		fprintf( stderr, "error: bind failed\n" );
 		return( -1 );
 	}
@@ -146,6 +148,7 @@ int statusrequest(char *connection, char *class, char *host)
 	lmb = sizeof( maxbuff );
 	if( setsockopt( sock, SOL_SOCKET, SO_RCVBUF,
 			(char *) & maxbuff, lmb ) != 0 ) {
+		close(sock);
 		fprintf( stderr, "error: setsockopt falied\n" );
 		return( -1 );
 	}
@@ -165,6 +168,7 @@ int statusrequest(char *connection, char *class, char *host)
 		status = bcastUDP( sock, (char *) & req,
 				   sizeof( struct request), CS_PORT );
 		if( status < 0 ) {
+			close(sock);
 			fprintf( stderr,
 				"error: broadcasting status request failed\n");
 			return( -1 );

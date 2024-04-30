@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 
 #define MY_BUFSIZE 4096

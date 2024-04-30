@@ -4,6 +4,8 @@
 #include <errno.h>
 #include <string.h>
 #include <strings.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -90,6 +92,9 @@ int recvfromReply(int s, struct sockaddr_in *from,
 	bcopy( & replycopy, reply, sizeof( struct reply ) - MAXDETAILS );
 	
 	numc = atoi( replycopy.numconnections );
+
+	if (numc > MAXNCONNECTIONS)
+		numc = MAXNCONNECTIONS;
 
 	if( numc <= 0 ) {
 		if( dlen == MAXDETAILS ) {

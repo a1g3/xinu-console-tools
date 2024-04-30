@@ -20,10 +20,10 @@ void rawtty(int fd)
 {
   struct termios t;
   
-  if ( ttyissaved[fd] )
-    return;
-  
   if ( (fd < 0) || ( fd >= NTTY ) )
+    return;
+
+  if ( ttyissaved[fd] )
     return;
   
   if ( tcgetattr(fd, savedttys + fd) < 0 )

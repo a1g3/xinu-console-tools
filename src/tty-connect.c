@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <signal.h>
+#include <string.h>
 
 /* Include file control header */
 #ifdef DEC
@@ -30,7 +31,7 @@ static void quit(int i)
 /**
  * Sets actions to take when signals are received.
  */
-static setSignals()
+static int setSignals()
 {
 #ifdef SOLARIS
 	{
@@ -55,6 +56,8 @@ static setSignals()
 	signal(SIGTSTP, SIG_IGN);
 	signal(SIGPIPE, SIG_IGN);
 #endif
+
+	return 0;
 }
 
 /**
@@ -77,7 +80,7 @@ static int cook = 0;
  * @param argc number of command line arguments
  * @param argv command line arguments
  */
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	char *ttyname = NULL;   /* name of the tty                  */
 	char *ttyrate = "9600"; /* tty connection baud rate, default is 9600 */

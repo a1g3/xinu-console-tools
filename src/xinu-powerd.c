@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <pwd.h>
 #include <grp.h>
+#include <arpa/inet.h>
 
 #include <xinu-power.h>
 
@@ -56,7 +57,7 @@ int main(int argc, char **argv)
     struct sockaddr_in their_addr; // connector's address information
 	int their_addrlen;    // socket funcs require pointer to size int, weird
 	char received_cmd[VALID_CMD_LEN+1]; // holds cmd, null terminated
-	int len, bytes_sent, tcp_wrap_result;
+	int tcp_wrap_result;
 
 	if( (2 == argc) && (0 == strncmp( argv[ 1 ], "-p", 2 )) ) {
 			dumppid = 1;
@@ -101,13 +102,13 @@ int main(int argc, char **argv)
 #ifdef LIBWRAP
 		/* Ask TCP wrappers if this source address is OK. */
 		tcp_wrap_result = hosts_ctl(CS_PSERVER, STRING_UNKNOWN,
-									inet_ntoa(their_addr.sin_addr),
+									(char *)inet_ntoa(their_addr.sin_addr),
 									STRING_UNKNOWN);
 		/* Nope.  Reject request without even responding. */
 		if (0 == tcp_wrap_result)
 		{
 			syslog(LOG_ERR, "Rejecting connection from barred IP %s.\n",
-				   inet_ntoa(their_addr.sin_addr) );
+				   (char *)inet_ntoa(their_addr.sin_addr) );
 			if( -1 == close(connected_sockfd) )
 			{
 				syslog(LOG_ERR, "close() connected: %s", strerror(errno));
@@ -116,7 +117,7 @@ int main(int argc, char **argv)
 		}
 #endif
 
-		syslog(LOG_INFO,"Client %s connected!\n", inet_ntoa(their_addr.sin_addr));
+		syslog(LOG_INFO,"Client %s connected!\n", (char *)inet_ntoa(their_addr.sin_addr));
 
 		if( -1 == get_command(connected_sockfd, received_cmd) )
 		{
@@ -160,7 +161,7 @@ int main(int argc, char **argv)
 			syslog(LOG_ERR, "close() connected: %s", strerror(errno));
 		}
 
-		syslog(LOG_INFO,"Client %s disconnected!\n", inet_ntoa(their_addr.sin_addr));
+		syslog(LOG_INFO,"Client %s disconnected!\n", (char *)inet_ntoa(their_addr.sin_addr));
 	}
 
 	if( close(listening_sockfd) == -1 )
@@ -431,7 +432,6 @@ static void setup_daemon(void)
 	}
 
 	if( strncmp( pwname, "root", 4 ) == 0 ) {
-		int gid;
 		struct group * gent;
 		struct passwd * pw;
 
